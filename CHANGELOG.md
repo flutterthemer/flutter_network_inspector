@@ -1,3 +1,12 @@
+## 0.1.0
+
+* More Info logged in the inspector
+* Improved UI and navigation
+
+## 0.0.9
+
+* Updating Home page and screenshot.
+
 ## 0.0.8
 
 * Screenshot update

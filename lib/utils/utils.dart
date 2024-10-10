@@ -2,10 +2,34 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-String toPrettyJson(Map<dynamic, dynamic>? jsonMap) {
-  if (null == jsonMap) {
+String toPrettyJson(dynamic input) {
+  Map<dynamic, dynamic>? jsonMap;
+
+  if (input == null) {
+    return '{}';
+  }
+
+  if (input is String) {
+    if (input.isEmpty) {
+      return '{}';
+    }
+    // If input is a JSON string, decode it into a Map
+    try {
+      jsonMap = json.decode(input);
+    } catch (e) {
+      return 'Error decoding JSON string: $e';
+    }
+  } else if (input is Map) {
+    // If input is already a Map, use it directly
+    jsonMap = input;
+  } else {
+    return 'Invalid input type: expected String or Map';
+  }
+
+  if (jsonMap == null) {
     return '';
   }
+
   try {
     // Use JsonEncoder with 2-space indentation to make the JSON pretty
     const jsonEncoder = JsonEncoder.withIndent('  ');
@@ -74,3 +98,7 @@ Future<void> showBottomSheetPanel(
     },
   );
 }
+
+bool isSuccess(int statusCode) => statusCode == 200 || statusCode == 201;
+
+double convertBytesToKB(int bytes) => bytes / 1024;

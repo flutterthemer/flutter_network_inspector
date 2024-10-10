@@ -20,7 +20,7 @@ class _DemoState extends State<Demo> {
         children: [
           ElevatedButton(
             onPressed: () {
-              Services.getTodos();
+              Services.executeTestCalls();
             },
             child: const Text('Get ToDos'),
           ),

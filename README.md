@@ -2,7 +2,7 @@ This package helps you to monitor networks calls done using the http package wit
 
 ## Features
 
-![App Screenshot](./screenshot1.png)
+![App Screenshot](https://raw.githubusercontent.com/flutterthemer/flutter_network_inspector/main/screenshot1.png)
 
 ## Getting started
 

@@ -13,53 +13,32 @@ class InspectorUI extends StatelessWidget {
       valueListenable: FNICLient.inspectorNotifierList,
       builder: (context, inspectorResults, _) {
         return ListView.separated(
-          separatorBuilder: (_, __) => const Divider(),
+          separatorBuilder: (_, __) => const Divider(color: Colors.black12),
           itemCount: inspectorResults.length,
           itemBuilder: (context, index) {
             final data = inspectorResults[index];
-            return Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
+            final success = isSuccess(data.statusCode ?? 0);
+            return ListTile(
+              dense: true,
+              enableFeedback: true,
+              onTap: () {
+                Navigator.of(context).pushNamed('/details', arguments: data);
+              },
+              leading: _LeadingStatusIncdicatorBlock(
+                success: success,
+                method: data.baseRequest?.method ?? ' <null>',
+              ),
+              trailing: Text(
+                '${data.duration?.inMilliseconds} ms',
+              ),
+              title: Text(
+                data.url?.host ?? '<null>',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PlainRow(
-                    title: 'Start time',
-                    value: getFormattedTime(data.startTime),
-                  ),
-                  PlainRow(
-                    title: 'End time',
-                    value: getFormattedTime(data.endTime),
-                  ),
-                  PlainRow(
-                    title: 'Duration',
-                    value: '${data.duration?.inMilliseconds} ms',
-                  ),
-                  PlainRow(
-                    title: 'Status Code',
-                    value: data.statusCode.toString(),
-                  ),
-                  PlainRow(title: 'Scheme', value: data.url?.scheme),
-                  PlainRow(title: 'Host', value: data.url?.host),
-                  PlainRow(title: 'Path', value: data.url?.path),
-                  PlainRow(title: 'Query', value: data.url?.query),
-                  PlainRow(title: 'Origin', value: data.url?.origin),
-                  PlainRow(title: 'Data', value: data.url?.data.toString()),
-                  PlainRow(
-                    title: 'Headers',
-                    value: 'Method: ${data.baseRequest?.method}',
-                    moreDetails: toPrettyJson(data.headers),
-                  ),
-                  PlainRow(
-                    title: 'Response',
-                    value: 'tap to see',
-                    moreDetails: data.resBody,
-                  ),
-                  PlainRow(title: 'Reason phrase', value: data.reasonPhrase),
-                  PlainRow(
-                    title: 'Response length',
-                    value: '${data.responseBodyBytes} bytes',
-                  ),
-                ],
+                children: [Text(data.url?.path ?? '<null>')],
               ),
             );
           },
@@ -105,6 +84,33 @@ class PlainRow extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _LeadingStatusIncdicatorBlock extends StatelessWidget {
+  const _LeadingStatusIncdicatorBlock({
+    this.success = false,
+    this.method = '',
+  });
+
+  final bool success;
+  final String method;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      width: 60,
+      decoration: BoxDecoration(
+        color: success ? Colors.green : Colors.red,
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: Text(
+        method,
+        style: const TextStyle(color: Colors.white, fontSize: 10),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
