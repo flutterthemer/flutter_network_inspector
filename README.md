@@ -38,3 +38,4 @@ Then use this client to do all network calls.
 # flutter_network_inspector
 # flutter_network_inspector
 # flutter_network_inspector
+# flutter_network_inspector
