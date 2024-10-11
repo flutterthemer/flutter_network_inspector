@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_network_inspector/client/logger.dart';
 import 'package:flutter_network_inspector/models/inspector_result.dart';
 import 'package:flutter_network_inspector/ui/expanded_text.dart';
 import 'package:flutter_network_inspector/ui/inspector_ui.dart';
@@ -13,15 +14,25 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = ModalRoute.of(context)!.settings.arguments as InspectorResult;
     final success = isSuccess(data.statusCode ?? 0);
+    final logEnabled = data.logEnabled;
+    doLog('logEnabled: $logEnabled');
     return Scaffold(
       appBar: AppBar(
         elevation: 3,
+        centerTitle: true,
         title: Text(
           'Details',
           style: TextStyle(
             color: success ? Colors.green.shade400 : Colors.red.shade400,
           ),
         ),
+        actions: [
+          Icon(
+            Icons.history,
+            color: logEnabled ? Colors.green : Colors.grey,
+          ),
+          const SizedBox(width: 20),
+        ],
       ),
       body: SafeArea(
         child: ListView(

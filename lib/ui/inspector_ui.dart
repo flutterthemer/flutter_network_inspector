@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_network_inspector/net_inspect.dart';
 import 'package:flutter_network_inspector/utils/utils.dart';

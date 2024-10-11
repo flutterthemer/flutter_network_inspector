@@ -1,4 +1,4 @@
-Effortlessly monitor your app’s network calls with this simple and easy-to-use package for the http library!
+Effortlessly monitor your app’s network calls with this simple and easy-to-use package for the [http](https://pub.dev/packages/http)! library.
 
 ## Features
 
@@ -20,14 +20,17 @@ The UI is fully compatible with your app's theme.
 ## Usage
 
 ```dart
+ // Create a client for doing network calls.
  final client = FNICLient();
+ // To enable logging of data to console.
+ client.setEnableLogging(true);
 
+ // Use the client for networking calls.
  final postResponse = await client.post(
     Uri.parse('https://jsonplaceholder.typicode.com/posts'),
     headers: {'Content-Type': 'application/json'},
     body: '{"title": "foo", "body": "bar", "userId": 1}',
  );
- doLog('Response: ${postResponse.body}');
 ```
 
 To view the details of network calls, you can add the Flutter network inspector UI anywhere in your widget tree. 
@@ -40,7 +43,7 @@ To view the details of network calls, you can add the Flutter network inspector 
         elevation: 3,
         title: const Text('Flutter Network Inspector'),
       ),
-      body: const FNIHome(),
+      body: const FNIHome(), // show all network activity, use it with your navigator too.
     );
   }
 ```

@@ -6,6 +6,7 @@ import 'package:flutter_network_inspector/net_inspect.dart';
 class Services {
   static Future<void> executeTestCalls() async {
     final client = FNICLient();
+    client.setEnableLogging(false);
 
     var response = await client.get(
       Uri.parse('https://jsonplaceholder.typicode.com/posts'),

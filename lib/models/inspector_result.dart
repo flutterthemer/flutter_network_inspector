@@ -16,6 +16,7 @@ class InspectorResult {
   Duration? duration;
   String? connectionType;
   SSLDetails? sslDetails;
+  bool logEnabled;
 
   InspectorResult({
     this.baseRequest,
@@ -32,5 +33,6 @@ class InspectorResult {
     this.duration,
     this.connectionType,
     this.sslDetails,
+    this.logEnabled = false,
   });
 }

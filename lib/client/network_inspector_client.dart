@@ -9,8 +9,10 @@ import 'package:http/http.dart' as http;
 
 class FNICLient extends http.BaseClient {
   final http.Client _client;
+  var logEnabled = false;
 
-  // Declare a static ValueNotifier for a list of InspectorResult
+  setEnableLogging(bool enable) => logEnabled = enable;
+
   static final ValueNotifier<List<InspectorResult>> inspectorNotifierList =
       ValueNotifier<List<InspectorResult>>([]);
 
@@ -28,10 +30,18 @@ class FNICLient extends http.BaseClient {
     inspectorNotifierList.value.add(inspectorResult);
 
     // Log the request details
+    if (logEnabled) {
+      doLog('Sending request to ${request.url}');
+      doLog('Request Method: ${request.method}');
+      doLog('Request Headers: ${request.headers}');
+      if (request is http.Request) {
+        doLog('Request Body: ${request.body}');
+      }
+    }
+
     inspectorResult.headers = request.headers;
     if (request is http.Request) {
       inspectorResult.reqBody = request.body;
-      doLog(inspectorResult.reqBody);
     }
 
     try {
@@ -44,6 +54,17 @@ class FNICLient extends http.BaseClient {
       // Log the end time and calculate the duration
       final DateTime endTime = DateTime.now();
       final Duration duration = endTime.difference(startTime);
+
+      if (logEnabled) {
+        doLog('Response status: ${response.statusCode}');
+        doLog('Response reason phrase: ${response.reasonPhrase}');
+        doLog('Response Headers: ${response.headers}');
+        doLog('Response Body: $responseBodyString');
+        doLog('Connection Type: $connectionType');
+        doLog(
+          'SSL Details: Subject: ${sslDetails?.subject}, Issuer: ${sslDetails?.issuer}',
+        );
+      }
 
       // Ensure that the list is not empty before updating the last element
       if (inspectorNotifierList.value.isNotEmpty) {
@@ -63,6 +84,7 @@ class FNICLient extends http.BaseClient {
           duration: duration,
           connectionType: connectionType,
           sslDetails: sslDetails,
+          logEnabled: logEnabled,
         );
         inspectorNotifierList.value = updatedList;
       }
@@ -70,7 +92,6 @@ class FNICLient extends http.BaseClient {
       // Create a new Stream from the response bytes
       final newStream = Stream.fromIterable([responseBodyBytes]);
 
-      // Return the response with the new stream
       return http.StreamedResponse(
         newStream,
         response.statusCode,
@@ -83,15 +104,12 @@ class FNICLient extends http.BaseClient {
 
       // Handle errors
       if (e is SocketException) {
-        // Handle network errors
         inspectorResult.reasonPhrase = 'Network Error: ${e.message}';
+        if (logEnabled) doLog('Network Error: ${e.message}');
       } else {
-        // Handle other types of exceptions
         inspectorResult.reasonPhrase = 'Error: ${e.toString()}';
+        if (logEnabled) doLog('Error: ${e.toString()}');
       }
-
-      // Log the error details
-      // doLog('Request failed: ${inspectorResult.reasonPhrase}');
 
       // Update inspectorResult even if there's an error
       inspectorResult.statusCode = 0;
@@ -100,7 +118,6 @@ class FNICLient extends http.BaseClient {
       inspectorResult.connectionType = connectionType;
       inspectorResult.sslDetails = sslDetails;
 
-      // Add the failed request result to the notifier list
       inspectorNotifierList.value.add(inspectorResult);
 
       rethrow;
@@ -110,5 +127,6 @@ class FNICLient extends http.BaseClient {
   @override
   void close() {
     _client.close();
+    if (logEnabled) doLog('FNI Client Closed');
   }
 }
