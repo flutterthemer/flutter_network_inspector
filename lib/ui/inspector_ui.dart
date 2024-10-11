@@ -9,41 +9,47 @@ class InspectorUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: FNICLient.inspectorNotifierList,
-      builder: (context, inspectorResults, _) {
-        return ListView.separated(
-          separatorBuilder: (_, __) => const Divider(color: Colors.black12),
-          itemCount: inspectorResults.length,
-          itemBuilder: (context, index) {
-            final data = inspectorResults[index];
-            final success = isSuccess(data.statusCode ?? 0);
-            return ListTile(
-              dense: true,
-              enableFeedback: true,
-              onTap: () {
-                Navigator.of(context).pushNamed('/details', arguments: data);
-              },
-              leading: _LeadingStatusIncdicatorBlock(
-                success: success,
-                method: data.baseRequest?.method ?? ' <null>',
-              ),
-              trailing: Text(
-                '${data.duration?.inMilliseconds} ms',
-              ),
-              title: Text(
-                data.url?.host ?? '<null>',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(data.url?.path ?? '<null>')],
-              ),
-            );
-          },
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 3,
+        title: const Text('Activity'),
+      ),
+      body: ValueListenableBuilder(
+        valueListenable: FNICLient.inspectorNotifierList,
+        builder: (context, inspectorResults, _) {
+          return ListView.separated(
+            separatorBuilder: (_, __) => const Divider(color: Colors.black12),
+            itemCount: inspectorResults.length,
+            itemBuilder: (context, index) {
+              final data = inspectorResults[index];
+              final success = isSuccess(data.statusCode ?? 0);
+              return ListTile(
+                dense: true,
+                enableFeedback: true,
+                onTap: () {
+                  Navigator.of(context).pushNamed('/details', arguments: data);
+                },
+                leading: _LeadingStatusIncdicatorBlock(
+                  success: success,
+                  method: data.baseRequest?.method ?? ' <null>',
+                ),
+                trailing: Text(
+                  '${data.duration?.inMilliseconds} ms',
+                ),
+                title: Text(
+                  data.url?.host ?? '<null>',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(data.url?.path ?? '<null>')],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -53,36 +59,39 @@ class PlainRow extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
-    this.moreDetails,
+    this.copyEnabled = false,
   });
 
   final String title;
   final String? value;
-  final String? moreDetails;
+  final bool copyEnabled;
 
   @override
   Widget build(BuildContext context) {
-    final hasMoreDetails =
-        moreDetails != null && moreDetails!.trim().isNotEmpty;
     return Row(
       children: [
         Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          '$title: ',
+          style: const TextStyle(color: Colors.blue),
         ),
-        const Text(': '),
-        Flexible(child: Text(value ?? 'null')),
-        if (hasMoreDetails) ...[
-          const SizedBox(width: 5),
-          GestureDetector(
-            onTap: () {
-              if (hasMoreDetails) {
-                unawaited(showBottomSheetPanel(context, title, moreDetails!));
+        Expanded(child: Text(value ?? 'null')),
+        if (null != value && value!.isNotEmpty)
+          IconButton(
+            padding: EdgeInsets.zero,
+            iconSize: 20,
+            style: const ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            onPressed: () async {
+              final copied = await copyToClipboard(value!);
+              if (copied && context.mounted) {
+                showSnackbar(context, '$title copied');
               }
             },
-            child: const Icon(Icons.info),
-          ),
-        ],
+            icon: const Icon(
+              Icons.copy_outlined,
+              color: Colors.grey,
+            ),
+          )
       ],
     );
   }

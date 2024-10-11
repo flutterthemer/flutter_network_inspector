@@ -4,6 +4,7 @@ import 'dart:io'; // Import this for SocketException
 import 'package:flutter/foundation.dart';
 import 'package:flutter_network_inspector/client/logger.dart';
 import 'package:flutter_network_inspector/models/inspector_result.dart';
+import 'package:flutter_network_inspector/utils/utils.dart';
 import 'package:http/http.dart' as http;
 
 class FNICLient extends http.BaseClient {
@@ -19,6 +20,9 @@ class FNICLient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final DateTime startTime = DateTime.now();
     final inspectorResult = InspectorResult();
+
+    final connectionType = await getConnectionType();
+    final sslDetails = await getSSLDetails(request.url);
 
     // Add a new InspectorResult to the list
     inspectorNotifierList.value.add(inspectorResult);
@@ -57,6 +61,8 @@ class FNICLient extends http.BaseClient {
           startTime: startTime,
           endTime: endTime,
           duration: duration,
+          connectionType: connectionType,
+          sslDetails: sslDetails,
         );
         inspectorNotifierList.value = updatedList;
       }
@@ -91,6 +97,8 @@ class FNICLient extends http.BaseClient {
       inspectorResult.statusCode = 0;
       inspectorResult.endTime = endTime;
       inspectorResult.duration = duration;
+      inspectorResult.connectionType = connectionType;
+      inspectorResult.sslDetails = sslDetails;
 
       // Add the failed request result to the notifier list
       inspectorNotifierList.value.add(inspectorResult);

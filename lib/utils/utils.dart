@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_network_inspector/models/ssl_details.dart';
 
 String toPrettyJson(dynamic input) {
   Map<dynamic, dynamic>? jsonMap;
@@ -102,3 +106,53 @@ Future<void> showBottomSheetPanel(
 bool isSuccess(int statusCode) => statusCode == 200 || statusCode == 201;
 
 double convertBytesToKB(int bytes) => bytes / 1024;
+
+Future<String> getConnectionType() async {
+  var connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult.contains(ConnectivityResult.mobile)) {
+    return 'Mobile Data';
+  }
+  if (connectivityResult.contains(ConnectivityResult.wifi)) {
+    return 'Wi-Fi';
+  }
+  if (connectivityResult.contains(ConnectivityResult.ethernet)) {
+    return 'Ethernet';
+  }
+  return 'Unknown';
+}
+
+Future<SSLDetails?> getSSLDetails(Uri url) async {
+  var client = HttpClient(context: SecurityContext.defaultContext);
+  var request = await client.getUrl(url);
+  var response = await request.close();
+  final sslDetails = SSLDetails(subject: 'No Data', issuer: 'No Data');
+  response.listen((_) {}, onDone: () {
+    var certificate = response.certificate;
+    if (certificate != null) {
+      sslDetails.subject = certificate.subject;
+      sslDetails.issuer = certificate.issuer;
+    }
+  });
+  return sslDetails;
+}
+
+/// Copies the given [text] to the clipboard.
+Future<bool> copyToClipboard(String text) async {
+  try {
+    await Clipboard.setData(ClipboardData(text: text));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+void showSnackbar(BuildContext context, String message,
+    {Duration duration = const Duration(seconds: 3)}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      duration: duration,
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+}

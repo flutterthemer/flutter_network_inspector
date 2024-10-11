@@ -1,6 +1,6 @@
 name: flutter_network_inspector
-description: This package helps you to monitor networks calls done using the http package with in the app. if you are using the dart's http package and not using any third party packages, you an use this library to track all your http requests.
-version: 0.1.1
+description: This package allows you to monitor network calls made with Dart’s http package. Track all your HTTP requests easily without using third-party libraries.
+version: 0.1.5
 homepage: https://github.com/flutterthemer/flutter_network_inspector
 
 environment:
@@ -8,6 +8,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  connectivity_plus: ^6.0.5
   flutter:
     sdk: flutter
   

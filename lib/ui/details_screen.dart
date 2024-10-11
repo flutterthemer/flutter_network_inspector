@@ -24,49 +24,54 @@ class DetailsScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              PlainRow(
-                title: 'Start time',
-                value: getFormattedTime(data.startTime),
-              ),
-              PlainRow(
-                title: 'End time',
-                value: getFormattedTime(data.endTime),
-              ),
-              PlainRow(
-                title: 'Duration',
-                value: '${data.duration?.inMilliseconds} ms',
-              ),
-              PlainRow(
-                title: 'Status Code',
-                value: data.statusCode.toString(),
-              ),
-              PlainRow(title: 'Scheme', value: data.url?.scheme),
-              PlainRow(title: 'Host', value: data.url?.host),
-              PlainRow(title: 'Path', value: data.url?.path),
-              PlainRow(title: 'Origin', value: data.url?.origin),
-              PlainRow(
-                title: 'Response length',
-                value:
-                    '${convertBytesToKB(data.responseBodyBytes ?? 0).toStringAsFixed(2)} KB',
-              ),
-              ExpandableText(title: 'Query', content: data.url?.query),
-              ExpandableText(
-                title: 'Request Data',
-                content: toPrettyJson(data.reqBody),
-              ),
-              ExpandableText(
-                title: 'Headers',
-                content: toPrettyJson(data.headers),
-              ),
-              ExpandableText(title: 'Response', content: data.resBody),
-              ExpandableText(
-                  title: 'Reason phrase', content: data.reasonPhrase),
-            ],
-          ),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
+          children: [
+            PlainRow(
+              title: 'Start time',
+              value: getFormattedTime(data.startTime),
+            ),
+            PlainRow(
+              title: 'End time',
+              value: getFormattedTime(data.endTime),
+            ),
+            PlainRow(
+              title: 'Duration',
+              value: '${data.duration?.inMilliseconds} ms',
+            ),
+            PlainRow(
+              title: 'Status Code',
+              value: data.statusCode.toString(),
+            ),
+            PlainRow(title: 'Scheme', value: data.url?.scheme),
+            PlainRow(title: 'Origin', value: data.url?.origin),
+            PlainRow(title: 'Host', value: data.url?.host),
+            PlainRow(title: 'Path', value: data.url?.path),
+            PlainRow(
+              title: 'Response length',
+              value:
+                  '${convertBytesToKB(data.responseBodyBytes ?? 0).toStringAsFixed(2)} KB',
+            ),
+            ExpandableText(title: 'Query', content: data.url?.query),
+            ExpandableText(
+              title: 'Request Data',
+              content: toPrettyJson(data.reqBody),
+            ),
+            ExpandableText(
+              title: 'Headers',
+              content: toPrettyJson(data.headers),
+            ),
+            ExpandableText(title: 'Response', content: data.resBody),
+            ExpandableText(
+              title: success ? 'Reason phrase' : 'Error',
+              content: data.reasonPhrase,
+            ),
+            ExpandableText(
+              title: 'SSL Details',
+              content:
+                  'Subject: \n${data.sslDetails?.subject}\nIssuer:\n${data.sslDetails?.issuer}',
+            ),
+          ],
         ),
       ),
     );

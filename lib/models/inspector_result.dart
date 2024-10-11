@@ -1,3 +1,4 @@
+import 'package:flutter_network_inspector/models/ssl_details.dart';
 import 'package:http/http.dart';
 
 class InspectorResult {
@@ -13,6 +14,8 @@ class InspectorResult {
   DateTime? startTime;
   DateTime? endTime;
   Duration? duration;
+  String? connectionType;
+  SSLDetails? sslDetails;
 
   InspectorResult({
     this.baseRequest,
@@ -27,5 +30,7 @@ class InspectorResult {
     this.startTime,
     this.endTime,
     this.duration,
+    this.connectionType,
+    this.sslDetails,
   });
 }
