@@ -8,7 +8,7 @@ Effortlessly monitor your app’s network calls with this simple and easy-to-use
 
 ## Demo
 
-<img src="https://raw.githubusercontent.com/flutterthemer/flutter_network_inspector/refs/heads/main/demo.gif" alt="App Screenshot" width="320" height="700">
+<img src="https://github.com/flutterthemer/flutter_network_inspector/blob/main/demo.gif" alt="App Screenshot" width="320" height="700">
 
 ## Getting started
 
