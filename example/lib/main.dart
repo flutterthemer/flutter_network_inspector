@@ -41,12 +41,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 3,
-        title: const Text('Flutter Network Inspector'),
-      ),
-      body: const FNIHome(),
-    );
+    return const FNIHome();
   }
 }

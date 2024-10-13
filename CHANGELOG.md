@@ -1,3 +1,9 @@
+## 0.1.7
+
+* Updated UI, Better performance
+* Customize title
+* Show Log enabled/diabled.
+
 ## 0.1.6
 
 * Enable/Disable Logging to console.

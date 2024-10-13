@@ -57,6 +57,33 @@ class Services {
       Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),
       headers: {'Content-Type': 'application/json'},
     );
-    // doLog('Final Response: ${response.body}');
+
+    response = await client.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts?userId=1'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    response = await client.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts/1/comments'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    response = await client.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    response = await client.post(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),
+      headers: {'Content-Type': 'application/json'},
+      body: '{"title": "foo", "body": "bar", "userId": 1}',
+    );
+
+    response = await client.post(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts?userId=1'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    doLog('Final Response: ${response.body}');
   }
 }

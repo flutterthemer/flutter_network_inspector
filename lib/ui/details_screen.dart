@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_network_inspector/client/logger.dart';
 import 'package:flutter_network_inspector/models/inspector_result.dart';
 import 'package:flutter_network_inspector/ui/expanded_text.dart';
 import 'package:flutter_network_inspector/ui/inspector_ui.dart';
@@ -15,7 +14,6 @@ class DetailsScreen extends StatelessWidget {
     final data = ModalRoute.of(context)!.settings.arguments as InspectorResult;
     final success = isSuccess(data.statusCode ?? 0);
     final logEnabled = data.logEnabled;
-    doLog('logEnabled: $logEnabled');
     return Scaffold(
       appBar: AppBar(
         elevation: 3,
@@ -27,11 +25,21 @@ class DetailsScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          Icon(
-            Icons.history,
-            color: logEnabled ? Colors.green : Colors.grey,
+          IconButton(
+            onPressed: () async {
+              showSnackbar(
+                context,
+                logEnabled
+                    ? 'Logs enabled.\nTo turn off, call client.setEnableLogging(false)'
+                    : 'Logs disabled.\nTo turn on, call client.setEnableLogging(true)',
+              );
+            },
+            icon: Icon(
+              Icons.history,
+              color: logEnabled ? Colors.green : Colors.grey,
+            ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 10),
         ],
       ),
       body: SafeArea(
@@ -49,6 +57,10 @@ class DetailsScreen extends StatelessWidget {
             PlainRow(
               title: 'Duration',
               value: '${data.duration?.inMilliseconds} ms',
+            ),
+            PlainRow(
+              title: 'Connection type',
+              value: '${data.connectionType}',
             ),
             PlainRow(
               title: 'Status Code',
