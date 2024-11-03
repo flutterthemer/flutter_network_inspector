@@ -1,22 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io'; // Import this for SocketException
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+import 'package:flutter_network_inspector/client/fni.dart';
 import 'package:flutter_network_inspector/client/logger.dart';
 import 'package:flutter_network_inspector/models/inspector_result.dart';
+import 'package:flutter_network_inspector/utils/data.dart';
 import 'package:flutter_network_inspector/utils/utils.dart';
 import 'package:http/http.dart' as http;
 
-class FNICLient extends http.BaseClient {
-  final http.Client _client;
-  var logEnabled = false;
+class FNIHttpCLient extends http.BaseClient {
+  http.Client _client = http.Client();
 
-  setEnableLogging(bool enable) => logEnabled = enable;
+  factory FNIHttpCLient(http.Client? c) {
+    if (c == null) {
+      return FNIHttpCLient._internal(http.Client());
+    }
+    return FNIHttpCLient._internal(c);
+  }
 
-  static final ValueNotifier<List<InspectorResult>> inspectorNotifierList =
-      ValueNotifier<List<InspectorResult>>([]);
+  FNIHttpCLient._internal(this._client);
 
-  FNICLient([http.Client? client]) : _client = client ?? http.Client();
+  http.Client get client => _client;
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
@@ -74,6 +78,7 @@ class FNICLient extends http.BaseClient {
           baseRequest: request,
           reqBody: inspectorResult.reqBody,
           url: request.url,
+          method: request.method,
           statusCode: response.statusCode,
           resBody: responseBodyString,
           reasonPhrase: response.reasonPhrase,
@@ -126,7 +131,7 @@ class FNICLient extends http.BaseClient {
 
   @override
   void close() {
-    _client.close();
+    _client?.close();
     if (logEnabled) doLog('FNI Client Closed');
   }
 }

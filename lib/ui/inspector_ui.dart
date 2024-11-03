@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_network_inspector/net_inspect.dart';
 import 'package:flutter_network_inspector/utils/constants.dart';
+import 'package:flutter_network_inspector/utils/data.dart';
 import 'package:flutter_network_inspector/utils/utils.dart';
 
 class InspectorUI extends StatelessWidget {
@@ -19,7 +20,7 @@ class InspectorUI extends StatelessWidget {
         title: Text(title),
       ),
       body: ValueListenableBuilder(
-        valueListenable: FNICLient.inspectorNotifierList,
+        valueListenable: inspectorNotifierList,
         builder: (context, inspectorResults, _) {
           return ListView.separated(
             separatorBuilder: (_, __) => const Divider(
@@ -52,7 +53,7 @@ class InspectorUI extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      data.baseRequest?.method ?? noValue,
+                      data.method ?? noValue,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,

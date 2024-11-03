@@ -38,6 +38,7 @@ dependencies:
   http: ^1.2.2
   flutter_network_inspector:
     path: ../ 
+  dio: ^5.7.0
 
 dev_dependencies:
   flutter_test:

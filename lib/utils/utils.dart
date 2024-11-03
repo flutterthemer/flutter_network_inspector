@@ -6,6 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_network_inspector/models/ssl_details.dart';
 
+/// Converts a dynamic input into a formatted JSON string.
+///
+/// This function handles both `String` and `Map` input types.
+/// - If the input is a JSON string, it decodes and formats it.
+/// - If the input is a `Map`, it directly converts it to a formatted JSON string.
+/// - If the input is `null` or an invalid type, it returns an error message.
+///
+/// Parameters:
+/// - `input` (`dynamic`): The JSON string or Map to convert.
+///
+/// Returns:
+/// - `String`: A prettified JSON string or an error message.
 String toPrettyJson(dynamic input) {
   Map<dynamic, dynamic>? jsonMap;
 
@@ -46,6 +58,15 @@ String toPrettyJson(dynamic input) {
   }
 }
 
+/// Formats a `DateTime` object into a string of the format `HH:mm:ss:SSS`.
+///
+/// If the input is `null`, it returns `"00:00:00"`.
+///
+/// Parameters:
+/// - `dateTime` (`DateTime?`): The date and time to format.
+///
+/// Returns:
+/// - `String`: The formatted time string.
 String getFormattedTime(DateTime? dateTime) {
   if (null == dateTime) {
     return '00:00:00';
@@ -53,60 +74,32 @@ String getFormattedTime(DateTime? dateTime) {
   return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}:${dateTime.millisecond}';
 }
 
-Future<void> showBottomSheetPanel(
-  BuildContext context,
-  String title,
-  String content,
-) async {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    showDragHandle: true,
-    builder: (BuildContext context) {
-      return SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              AppBar(
-                title: Text(title),
-                backgroundColor: Colors.transparent,
-                leading: const SizedBox.shrink(),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    content,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
+/// Checks if a given HTTP status code represents a successful response.
+///
+/// Parameters:
+/// - `statusCode` (`int`): The HTTP status code to check.
+///
+/// Returns:
+/// - `bool`: `true` if the status code is 200 or 201, otherwise `false`.
 bool isSuccess(int statusCode) => statusCode == 200 || statusCode == 201;
 
+/// Converts bytes to kilobytes (KB).
+///
+/// Parameters:
+/// - `bytes` (`int`): The number of bytes to convert.
+///
+/// Returns:
+/// - `double`: The equivalent size in kilobytes.
 double convertBytesToKB(int bytes) => bytes / 1024;
 
+/// Retrieves the current network connection type.
+///
+/// This function checks for mobile, Wi-Fi, or Ethernet connectivity,
+/// and returns a string representing the connection type. If the connection
+/// type is unknown, it returns `"Unknown"`.
+///
+/// Returns:
+/// - `Future<String>`: A future that completes with the connection type as a string.
 Future<String> getConnectionType() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult.contains(ConnectivityResult.mobile)) {
@@ -121,6 +114,17 @@ Future<String> getConnectionType() async {
   return 'Unknown';
 }
 
+/// Fetches SSL details for a given URL.
+///
+/// This function uses `HttpClient` to make a connection to the specified `url`,
+/// and extracts SSL certificate details (subject and issuer) if available.
+///
+/// Parameters:
+/// - `url` (`Uri`): The URL to retrieve SSL details from.
+///
+/// Returns:
+/// - `Future<SSLDetails?>`: A future that completes with an `SSLDetails` object
+/// containing the SSL certificate information or `null` if unavailable.
 Future<SSLDetails?> getSSLDetails(Uri url) async {
   var client = HttpClient(context: SecurityContext.defaultContext);
   var request = await client.getUrl(url);
@@ -136,7 +140,14 @@ Future<SSLDetails?> getSSLDetails(Uri url) async {
   return sslDetails;
 }
 
-/// Copies the given [text] to the clipboard.
+/// Copies the specified text to the system clipboard.
+///
+/// Parameters:
+/// - `text` (`String`): The text to copy to the clipboard.
+///
+/// Returns:
+/// - `Future<bool>`: A future that completes with `true` if the copy operation
+/// succeeded, or `false` if an error occurred.
 Future<bool> copyToClipboard(String text) async {
   try {
     await Clipboard.setData(ClipboardData(text: text));
@@ -146,6 +157,15 @@ Future<bool> copyToClipboard(String text) async {
   }
 }
 
+/// Displays a snackbar with a custom message in the provided context.
+///
+/// The snackbar has a floating behavior and a customizable display duration.
+///
+/// Parameters:
+/// - `context` (`BuildContext`): The context in which to display the snackbar.
+/// - `message` (`String`): The message to display in the snackbar.
+/// - `duration` (`Duration`): The duration for which the snackbar should be displayed.
+///   Defaults to 3 seconds.
 void showSnackbar(BuildContext context, String message,
     {Duration duration = const Duration(seconds: 3)}) {
   ScaffoldMessenger.of(context).showSnackBar(

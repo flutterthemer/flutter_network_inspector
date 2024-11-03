@@ -1,6 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_network_inspector/utils/utils.dart';
 
+/// A stateful widget that displays expandable/collapsible text content with a title.
+///
+/// The `ExpandableText` widget is useful for displaying long pieces of text in a condensed form.
+/// It allows the user to expand or collapse the content by tapping on the title or an icon,
+/// making it ideal for showing additional details on demand.
+///
+/// This widget also provides an option to copy the content to the clipboard, accessible through a
+/// copy icon button. If the content is null or empty, a placeholder message is shown instead.
+///
+/// Example usage:
+/// ```dart
+/// ExpandableText(
+///   title: 'Description',
+///   content: 'This is a long description that can be expanded or collapsed.',
+/// );
+/// ```
+///
+/// Parameters:
+/// - `title` (String): The title of the expandable section, shown as a clickable text.
+/// - `content` (String?): The text content to display when expanded. Defaults to 'No Data to show' if null or empty.
+/// - `collapsedLines` (int): The number of lines to show when the content is collapsed. Default is 2.
+///
+/// This widget uses an `InkWell` widget to toggle the expansion state and shows an icon that indicates
+/// whether the text is currently expanded or collapsed. The copy icon button allows copying the content.
 class ExpandableText extends StatefulWidget {
   final String title;
   final String? content;
@@ -20,6 +44,7 @@ class ExpandableText extends StatefulWidget {
 class _ExpandableTextState extends State<ExpandableText> {
   bool _isExpanded = false;
 
+  /// Toggles the expanded state of the widget.
   void _toggleExpanded() {
     setState(() {
       _isExpanded = !_isExpanded;
@@ -31,6 +56,7 @@ class _ExpandableTextState extends State<ExpandableText> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Title row with clickable text and expand/collapse icon
         InkWell(
           onTap: _toggleExpanded,
           child: Row(
@@ -56,6 +82,8 @@ class _ExpandableTextState extends State<ExpandableText> {
             ],
           ),
         ),
+
+        // Expands to show content when _isExpanded is true
         if (_isExpanded)
           Container(
             width: double.infinity,
@@ -68,9 +96,12 @@ class _ExpandableTextState extends State<ExpandableText> {
             ),
             child: Stack(
               children: [
+                // Displays the content or a placeholder message
                 (widget.content == null || widget.content!.isEmpty)
                     ? const Text('No Data to show')
                     : Text(widget.content ?? 'No Data to show'),
+
+                // Copy icon button to copy content to the clipboard
                 if (null != widget.content && widget.content!.isNotEmpty)
                   Align(
                     alignment: Alignment.topRight,

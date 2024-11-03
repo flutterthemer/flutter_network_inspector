@@ -1,25 +1,49 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter_network_inspector/client/logger.dart';
 import 'package:flutter_network_inspector/net_inspect.dart';
 
 class Services {
   static Future<void> executeTestCalls() async {
-    final client = FNICLient();
-    client.setEnableLogging(false);
+    final dioClient = FNI.init(dio: Dio());
+    FNI.setEnableLogging(false);
 
-    var response = await client.get(
-      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
-      headers: {'Content-Type': 'application/json'},
+    var dioResponse = await dioClient.get(
+      'https://jsonplaceholder.typicode.com/posts/1',
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+      data: '{"title": "foo", "body": "bar", "userId": 1}',
     );
-    // doLog('Final Response: ${response.body}');
 
-    response = await client.post(
+    doLog('Final Response: ${dioResponse.data}');
+
+    dioResponse = await dioClient.post(
+      'https://jsonplaceholder.typicode.com/posts',
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+      data: '{"title": "foo", "body": "bar", "userId": 1}',
+    );
+
+    doLog('Final POST Response: ${dioResponse.data}');
+
+    dioResponse = await dioClient.post(
+      'https://jsonplaceholder.typicode.com/posts?userId=1',
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+
+    final client = FNI.init(httpClient: http.Client());
+    var response = await client.post(
       Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),
       headers: {'Content-Type': 'application/json'},
       body: '{"title": "foo", "body": "bar", "userId": 1}',
     );
-    // doLog('Final Response: ${response.body}');
+    doLog('Final Response: ${response.body}');
 
     response = await client.get(
       Uri.parse('https://jsonplaceholder.typicode.com/posts/1/comments'),
