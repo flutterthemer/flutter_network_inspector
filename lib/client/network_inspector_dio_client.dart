@@ -10,6 +10,7 @@ import 'package:flutter_network_inspector/utils/utils.dart';
 RequestOptions? _options;
 
 class FNIDioClient {
+  //
   Dio _dio;
 
   /// Factory constructor that initializes the Dio instance and adds the interceptor.
@@ -82,7 +83,7 @@ class FNIDioInterceptor extends Interceptor {
     if (response.data is String) {
       responseBodyBytes = utf8.encode(response.data);
     } else if (response.data is List<int>) {
-      responseBodyBytes = response.data;
+      responseBodyBytes = utf8.encode(response.data);
     } else {
       responseBodyBytes = utf8.encode(jsonEncode(response.data));
     }
@@ -98,7 +99,7 @@ class FNIDioInterceptor extends Interceptor {
         method: _options?.method,
         headers: _options?.headers,
         statusCode: response.statusCode,
-        resBody: jsonEncode(response.data),
+        resBody: toPrettyJson(jsonEncode(response.data)),
         responseBodyBytes: responseBodyBytes.length,
         startTime: startTime,
         endTime: endTime,

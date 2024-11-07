@@ -1,3 +1,12 @@
+## 2.0.0
+
+* Dio support added
+
+## 0.1.8
+
+* Updating demo video
+* Documentation update.
+
 ## 0.1.7
 
 * Updated UI, Better performance

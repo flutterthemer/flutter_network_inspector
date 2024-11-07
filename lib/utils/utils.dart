@@ -58,6 +58,49 @@ String toPrettyJson(dynamic input) {
   }
 }
 
+String toPrettyJsonList(dynamic input) {
+  List<dynamic>? jsonList;
+
+  if (input == null) {
+    return '[]';
+  }
+
+  if (input is String) {
+    if (input.isEmpty) {
+      return '[]';
+    }
+    // If input is a JSON string, decode it into a List
+    try {
+      jsonList = json.decode(input);
+      if (jsonList is! List) {
+        return 'Invalid input type: expected JSON List string';
+      }
+    } catch (e) {
+      return 'Error decoding JSON string: $e';
+    }
+  } else if (input is List) {
+    // If input is already a List, use it directly
+    jsonList = input;
+  } else {
+    return 'Invalid input type: expected String or List';
+  }
+
+  if (jsonList == null) {
+    return '[]';
+  }
+
+  try {
+    // Use JsonEncoder with 2-space indentation to make the JSON pretty
+    const jsonEncoder = JsonEncoder.withIndent('  ');
+
+    // Convert the List object into a pretty JSON string
+    return jsonEncoder.convert(jsonList);
+  } catch (e) {
+    // If there's an error during conversion, return an error message
+    return 'Error converting to JSON: $e';
+  }
+}
+
 /// Formats a `DateTime` object into a string of the format `HH:mm:ss:SSS`.
 ///
 /// If the input is `null`, it returns `"00:00:00"`.

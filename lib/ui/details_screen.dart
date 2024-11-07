@@ -112,7 +112,9 @@ class DetailsScreen extends StatelessWidget {
               content: toPrettyJson(data.headers),
             ),
             ExpandableText(
-                title: 'Response', content: toPrettyJson(data.resBody)),
+              title: 'Response',
+              content: data.resBody,
+            ),
             ExpandableText(
               title: success ? 'Reason phrase' : 'Error',
               content: data.reasonPhrase,

@@ -24,7 +24,7 @@ class FNIHttpCLient extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final DateTime startTime = DateTime.now();
+    final startTime = DateTime.now();
     final inspectorResult = InspectorResult();
 
     final connectionType = await getConnectionType();
@@ -53,11 +53,16 @@ class FNIHttpCLient extends http.BaseClient {
 
       // Read the response stream once and convert it into a new stream.
       final responseBodyBytes = await response.stream.toBytes();
-      final responseBodyString = utf8.decode(responseBodyBytes);
+      // final responseBodyString = toPrettyJson(utf8.decode(responseBodyBytes));
+
+      final decodedResponse = utf8.decode(responseBodyBytes);
+      final responseBodyString = json.decode(decodedResponse) is List
+          ? toPrettyJsonList(decodedResponse)
+          : toPrettyJson(decodedResponse);
 
       // Log the end time and calculate the duration
-      final DateTime endTime = DateTime.now();
-      final Duration duration = endTime.difference(startTime);
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime);
 
       if (logEnabled) {
         doLog('Response status: ${response.statusCode}');
@@ -72,8 +77,9 @@ class FNIHttpCLient extends http.BaseClient {
 
       // Ensure that the list is not empty before updating the last element
       if (inspectorNotifierList.value.isNotEmpty) {
-        final updatedList =
-            List<InspectorResult>.from(inspectorNotifierList.value);
+        final updatedList = List<InspectorResult>.from(
+          inspectorNotifierList.value,
+        );
         updatedList[updatedList.length - 1] = InspectorResult(
           baseRequest: request,
           reqBody: inspectorResult.reqBody,
@@ -104,8 +110,8 @@ class FNIHttpCLient extends http.BaseClient {
         reasonPhrase: response.reasonPhrase,
       );
     } catch (e) {
-      final DateTime endTime = DateTime.now();
-      final Duration duration = endTime.difference(startTime);
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime);
 
       // Handle errors
       if (e is SocketException) {
@@ -131,7 +137,7 @@ class FNIHttpCLient extends http.BaseClient {
 
   @override
   void close() {
-    _client?.close();
+    _client.close();
     if (logEnabled) doLog('FNI Client Closed');
   }
 }
